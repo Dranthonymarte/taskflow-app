@@ -1,24 +1,27 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { useTasks } from '../context/TasksContext';
 import { colors } from '../constants/colors';
 
-export default function TaskDetailScreen({ tarea, onVolver, onAlternarEstado, onEliminar }) {
+export default function TaskDetailScreen({ route, navigation }) {
+  const { tareaId } = route.params;
+  const { tareas, alternarEstado, eliminarTarea } = useTasks();
+  const tarea = tareas.find((elemento) => elemento.id === tareaId);
+
   if (!tarea) {
     return (
       <View style={styles.contenedor}>
         <Text style={styles.noEncontrada}>Esta tarea ya no existe.</Text>
-        <Pressable style={styles.botonSecundario} onPress={onVolver}>
-          <Text style={styles.textoBotonSecundario}>Volver a la lista</Text>
-        </Pressable>
       </View>
     );
   }
 
+  const borrar = () => {
+    eliminarTarea(tarea.id);
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.contenedor}>
-      <Pressable style={styles.volver} onPress={onVolver}>
-        <Text style={styles.textoVolver}>‹ Volver</Text>
-      </Pressable>
-
       <View style={styles.tarjeta}>
         <Text style={[styles.estado, tarea.completada && styles.estadoCompletada]}>
           {tarea.completada ? 'COMPLETADA' : 'PENDIENTE'}
@@ -29,14 +32,14 @@ export default function TaskDetailScreen({ tarea, onVolver, onAlternarEstado, on
 
       <Pressable
         style={({ pressed }) => [styles.boton, pressed && styles.botonPresionado]}
-        onPress={() => onAlternarEstado(tarea.id)}
+        onPress={() => alternarEstado(tarea.id)}
       >
         <Text style={styles.textoBoton}>
           {tarea.completada ? 'Marcar como pendiente' : 'Marcar como completada'}
         </Text>
       </Pressable>
 
-      <Pressable style={styles.botonSecundario} onPress={() => onEliminar(tarea.id)}>
+      <Pressable style={styles.botonSecundario} onPress={borrar}>
         <Text style={styles.textoBotonSecundario}>Eliminar tarea</Text>
       </Pressable>
     </View>
@@ -48,15 +51,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
     padding: 20,
-    paddingTop: 64,
-  },
-  volver: {
-    marginBottom: 16,
-  },
-  textoVolver: {
-    fontSize: 16,
-    color: colors.primary,
-    fontWeight: '600',
   },
   tarjeta: {
     backgroundColor: colors.surface,

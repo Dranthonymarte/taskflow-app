@@ -1,25 +1,28 @@
 import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
 import TaskItem from '../components/TaskItem';
 import EmptyState from '../components/EmptyState';
+import { useTasks } from '../context/TasksContext';
 import { colors } from '../constants/colors';
 
-export default function TaskListScreen({ tareas, onSeleccionarTarea, onNuevaTarea }) {
+export default function TaskListScreen({ navigation }) {
+  const { tareas } = useTasks();
   const pendientes = tareas.filter((tarea) => !tarea.completada).length;
+
+  const abrirDetalle = (tareaId) => {
+    navigation.navigate('TaskDetail', { tareaId });
+  };
 
   return (
     <View style={styles.contenedor}>
       <View style={styles.encabezado}>
-        <View style={styles.encabezadoTextos}>
-          <Text style={styles.titulo}>Mis tareas</Text>
-          <Text style={styles.subtitulo}>
-            {pendientes === 0
-              ? 'No te queda nada pendiente'
-              : `${pendientes} pendiente${pendientes === 1 ? '' : 's'}`}
-          </Text>
-        </View>
+        <Text style={styles.subtitulo}>
+          {pendientes === 0
+            ? 'No te queda nada pendiente'
+            : `${pendientes} pendiente${pendientes === 1 ? '' : 's'}`}
+        </Text>
         <Pressable
           style={({ pressed }) => [styles.botonNueva, pressed && styles.botonPresionado]}
-          onPress={onNuevaTarea}
+          onPress={() => navigation.navigate('AddTask')}
         >
           <Text style={styles.textoBotonNueva}>+</Text>
         </Pressable>
@@ -28,7 +31,7 @@ export default function TaskListScreen({ tareas, onSeleccionarTarea, onNuevaTare
       <FlatList
         data={tareas}
         keyExtractor={(tarea) => tarea.id}
-        renderItem={({ item }) => <TaskItem tarea={item} onPress={onSeleccionarTarea} />}
+        renderItem={({ item }) => <TaskItem tarea={item} onPress={abrirDetalle} />}
         contentContainerStyle={styles.lista}
         ListEmptyComponent={
           <EmptyState
@@ -51,21 +54,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-    paddingTop: 64,
-    paddingBottom: 16,
-  },
-  encabezadoTextos: {
-    flex: 1,
-  },
-  titulo: {
-    fontSize: 26,
-    fontWeight: '700',
-    color: colors.text,
+    paddingTop: 16,
+    paddingBottom: 12,
   },
   subtitulo: {
-    fontSize: 14,
+    fontSize: 15,
     color: colors.textMuted,
-    marginTop: 2,
   },
   botonNueva: {
     width: 44,

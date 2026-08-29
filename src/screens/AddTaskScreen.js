@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { useTasks } from '../context/TasksContext';
 import { colors } from '../constants/colors';
 
 const FORMULARIO_VACIO = { titulo: '', descripcion: '' };
@@ -30,10 +31,10 @@ function validar(valores) {
   return errores;
 }
 
-export default function AddTaskScreen({ onGuardar, onCancelar }) {
+export default function AddTaskScreen({ navigation }) {
+  const { agregarTarea } = useTasks();
   const [valores, setValores] = useState(FORMULARIO_VACIO);
   const [tocados, setTocados] = useState({});
-  const [guardada, setGuardada] = useState(null);
 
   const errores = validar(valores);
   const hayErrores = Object.keys(errores).length > 0;
@@ -61,14 +62,11 @@ export default function AddTaskScreen({ onGuardar, onCancelar }) {
     };
 
     console.log('Tarea creada:', tarea);
-
-    if (onGuardar) {
-      onGuardar(tarea);
-    }
+    agregarTarea(tarea);
 
     setValores(FORMULARIO_VACIO);
     setTocados({});
-    setGuardada(tarea.titulo);
+    navigation.navigate('TaskList');
   };
 
   const errorTitulo = tocados.titulo ? errores.titulo : undefined;
@@ -80,12 +78,6 @@ export default function AddTaskScreen({ onGuardar, onCancelar }) {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-        {onCancelar ? (
-          <Pressable style={styles.volver} onPress={onCancelar}>
-            <Text style={styles.textoVolver}>‹ Volver</Text>
-          </Pressable>
-        ) : null}
-
         <Text style={styles.titulo}>Nueva tarea</Text>
         <Text style={styles.subtitulo}>Completá los datos para agregarla a tu lista</Text>
 
@@ -120,9 +112,6 @@ export default function AddTaskScreen({ onGuardar, onCancelar }) {
           <Text style={styles.textoBoton}>Guardar tarea</Text>
         </Pressable>
 
-        {guardada ? (
-          <Text style={styles.confirmacion}>Se guardó «{guardada}». Mirá la consola.</Text>
-        ) : null}
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -135,7 +124,7 @@ const styles = StyleSheet.create({
   },
   scroll: {
     padding: 24,
-    paddingTop: 72,
+    paddingTop: 24,
   },
   volver: {
     marginBottom: 12,
