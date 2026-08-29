@@ -5,22 +5,24 @@ construida con React Native y Expo.
 
 ## Estado actual
 
-**Checkpoint 5: Navegación en React Native.** La app dejó de cambiar de pantalla con
-condicionales y ahora usa React Navigation de verdad. Hay un único `NavigationContainer` en
-la raíz, y dentro un **Bottom Tab Navigator** con dos pestañas: *Tareas* y *Perfil*. La
-pestaña *Tareas* no es una pantalla suelta sino un **Stack Navigator anidado** con el
-recorrido `TaskList → TaskDetail → AddTask`. Entre pantallas se pasa **solo el id** de la
-tarea por `route.params`, nunca el objeto completo. Al guardar una tarea nueva hay
-redirección programática de vuelta a la lista. Las tareas viven en un contexto compartido
-(`TasksProvider`) para que ambas ramas del navegador vean los mismos datos; en el Módulo 6
-ese contexto se reemplaza por Redux Toolkit.
+**Checkpoint 6: Redux Toolkit y estado global.** El contexto de React que compartía las
+tareas se reemplazó por un store de Redux Toolkit. El slice `tasks` concentra las cuatro
+acciones del dominio (`addTask`, `toggleTaskStatus`, `deleteTask` y `setFilter`); dentro de
+los reducers el estado se escribe como si se mutara porque Immer, incluido en Redux Toolkit,
+se encarga de mantenerlo inmutable. Las pantallas ya no guardan tareas en `useState`: leen
+con `useSelector` a través de selectores específicos y escriben con `useDispatch`. El filtro
+(todas / pendientes / completadas) también vive en el store, así que se mantiene al navegar
+al detalle y volver.
 
 ## Estructura del proyecto
 
 ```
 taskflow-app/
-├── App.js                        # Punto de entrada: proveedores + navegador raíz
+├── App.js                        # Provider de Redux + navegador raíz
 ├── src/
+│   ├── store/
+│   │   ├── index.js               # configureStore
+│   │   └── tasksSlice.js          # Slice de tareas, acciones y selectores
 │   ├── navigation/
 │   │   ├── RootNavigator.js       # NavigationContainer + Bottom Tabs
 │   │   └── TasksStackNavigator.js # Stack anidado de la pestaña Tareas
@@ -28,15 +30,14 @@ taskflow-app/
 │   │   ├── WelcomeScreen.js       # Pantalla del Checkpoint 1
 │   │   ├── ProfileCard.js         # Tarjeta reutilizable (props: name, role, image)
 │   │   ├── TaskItem.js            # Fila de la lista de tareas
+│   │   ├── TaskFilters.js         # Chips de filtrado conectados al store
 │   │   └── EmptyState.js          # Mensaje cuando no hay tareas
 │   ├── screens/
-│   │   ├── TaskListScreen.js      # Lista con FlatList y estado vacío
+│   │   ├── TaskListScreen.js      # Lista con FlatList, filtros y estado vacío
 │   │   ├── TaskDetailScreen.js    # Detalle, recibe el id por route.params
 │   │   ├── AddTaskScreen.js       # Formulario controlado con validación
 │   │   ├── HomeScreen.js          # Placeholder del Checkpoint 2
 │   │   └── ProfileScreen.js       # Muestra ProfileCard con datos de prueba
-│   ├── context/
-│   │   └── TasksContext.js        # Estado compartido de tareas
 │   ├── constants/
 │   │   └── colors.js              # Paleta de colores de TaskFlow
 │   ├── data/
@@ -61,5 +62,4 @@ taskflow-app/
 
 ## Próximos pasos
 
-- Módulo 6: estado global con Redux Toolkit.
-- Módulo 7: persistencia con Firebase.
+- Módulo 7: autenticación y persistencia con Firebase.

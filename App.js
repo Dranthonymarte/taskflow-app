@@ -1,15 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
+import { Provider } from 'react-redux';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootNavigator from './src/navigation/RootNavigator';
-import { TasksProvider } from './src/context/TasksContext';
+import { store } from './src/store';
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <TasksProvider>
+    <Provider store={store}>
+      <SafeAreaProvider>
         <RootNavigator />
         <StatusBar style="light" />
-      </TasksProvider>
-    </SafeAreaProvider>
+      </SafeAreaProvider>
+    </Provider>
   );
 }

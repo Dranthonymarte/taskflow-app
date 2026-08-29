@@ -9,7 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useTasks } from '../context/TasksContext';
+import { useDispatch } from 'react-redux';
+import { addTask } from '../store/tasksSlice';
 import { colors } from '../constants/colors';
 
 const FORMULARIO_VACIO = { titulo: '', descripcion: '' };
@@ -32,7 +33,7 @@ function validar(valores) {
 }
 
 export default function AddTaskScreen({ navigation }) {
-  const { agregarTarea } = useTasks();
+  const dispatch = useDispatch();
   const [valores, setValores] = useState(FORMULARIO_VACIO);
   const [tocados, setTocados] = useState({});
 
@@ -62,7 +63,7 @@ export default function AddTaskScreen({ navigation }) {
     };
 
     console.log('Tarea creada:', tarea);
-    agregarTarea(tarea);
+    dispatch(addTask(tarea));
 
     setValores(FORMULARIO_VACIO);
     setTocados({});

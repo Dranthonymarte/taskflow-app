@@ -1,12 +1,40 @@
+import { useMemo } from 'react';
 import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import TaskItem from '../components/TaskItem';
+import TaskFilters from '../components/TaskFilters';
 import EmptyState from '../components/EmptyState';
-import { useTasks } from '../context/TasksContext';
+import {
+  selectLista,
+  selectFiltro,
+  selectPendientes,
+  setFilter,
+} from '../store/tasksSlice';
 import { colors } from '../constants/colors';
 
+const MENSAJES_VACIO = {
+  todas: 'No tenés tareas cargadas. Tocá el botón + para crear la primera.',
+  pendientes: 'No te queda ninguna tarea pendiente.',
+  completadas: 'Todavía no completaste ninguna tarea.',
+};
+
 export default function TaskListScreen({ navigation }) {
-  const { tareas } = useTasks();
-  const pendientes = tareas.filter((tarea) => !tarea.completada).length;
+  const tareas = useSelector(selectLista);
+  const filtro = useSelector(selectFiltro);
+  const pendientes = useSelector(selectPendientes);
+  const dispatch = useDispatch();
+
+  const visibles = useMemo(() => {
+    if (filtro === 'pendientes') {
+      return tareas.filter((tarea) => !tarea.completada);
+    }
+
+    if (filtro === 'completadas') {
+      return tareas.filter((tarea) => tarea.completada);
+    }
+
+    return tareas;
+  }, [tareas, filtro]);
 
   const abrirDetalle = (tareaId) => {
     navigation.navigate('TaskDetail', { tareaId });
@@ -28,16 +56,18 @@ export default function TaskListScreen({ navigation }) {
         </Pressable>
       </View>
 
+      <TaskFilters
+        filtroActivo={filtro}
+        onCambiarFiltro={(valor) => dispatch(setFilter(valor))}
+      />
+
       <FlatList
-        data={tareas}
+        data={visibles}
         keyExtractor={(tarea) => tarea.id}
         renderItem={({ item }) => <TaskItem tarea={item} onPress={abrirDetalle} />}
         contentContainerStyle={styles.lista}
         ListEmptyComponent={
-          <EmptyState
-            titulo="Todo en orden"
-            mensaje="No tenés tareas cargadas. Tocá el botón + para crear la primera."
-          />
+          <EmptyState titulo="Nada por acá" mensaje={MENSAJES_VACIO[filtro]} />
         }
       />
     </View>
