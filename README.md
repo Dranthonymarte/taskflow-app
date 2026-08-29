@@ -3,6 +3,20 @@
 Aplicación móvil de productividad para gestionar tareas, hábitos y metas personales,
 construida con React Native y Expo.
 
+## Avance por módulo
+
+El proyecto se construye de forma incremental: cada módulo del curso deja su propio punto
+marcado en el historial. Esta rama muestra siempre el avance más reciente; para ver el
+proyecto tal como quedó al cerrar un módulo puntual, entrar por su enlace.
+
+| Módulo | Entregado | Ver ese punto del proyecto |
+|---|---|---|
+| 2 | Pantallas iniciales y tarjeta de perfil | [checkpoint-2](https://github.com/Dranthonymarte/taskflow-app/tree/checkpoint-2) |
+| 3 | Formulario de nueva tarea con validación | [checkpoint-3](https://github.com/Dranthonymarte/taskflow-app/tree/checkpoint-3) |
+| 4 | Lista con FlatList, detalle y estado vacío | [checkpoint-4](https://github.com/Dranthonymarte/taskflow-app/tree/checkpoint-4) |
+| 5 | Navegación con pestañas y stack anidado | [checkpoint-5](https://github.com/Dranthonymarte/taskflow-app/tree/checkpoint-5) |
+| 6 | Estado global con Redux Toolkit | [checkpoint-6](https://github.com/Dranthonymarte/taskflow-app/tree/checkpoint-6) |
+
 ## Estado actual
 
 **Checkpoint 6: Redux Toolkit y estado global.** El contexto de React que compartía las
