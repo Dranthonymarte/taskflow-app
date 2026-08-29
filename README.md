@@ -61,6 +61,18 @@ taskflow-app/
 └── assets/                        # Assets generados por Expo (ícono, splash)
 ```
 
+## Dependencias principales
+
+| Paquete | Para qué se usa |
+|---|---|
+| `expo` / `react-native` | Base del proyecto (Managed Workflow, SDK 54) |
+| `@reduxjs/toolkit` | Store global, `configureStore` y `createSlice` |
+| `react-redux` | Hooks `useSelector` y `useDispatch` en las pantallas |
+| `@react-navigation/native` | Contenedor de navegación |
+| `@react-navigation/native-stack` | Stack de la pestaña Tareas |
+| `@react-navigation/bottom-tabs` | Pestañas inferiores |
+| `react-native-screens` · `react-native-safe-area-context` | Requisitos nativos de React Navigation |
+
 ## Cómo ejecutar el proyecto localmente
 
 1. Instalar las dependencias:
