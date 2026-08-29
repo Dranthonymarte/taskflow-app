@@ -5,22 +5,25 @@ construida con React Native y Expo.
 
 ## Estado actual
 
-**Checkpoint 2: Componentes, estilos y estructura.** Sobre la base del Checkpoint 1 se
-agregó una tarjeta de perfil reutilizable (`ProfileCard`) que recibe sus datos por props,
-las pantallas iniciales (`HomeScreen` y `ProfileScreen`) y una paleta de colores centralizada
-en `src/constants/colors.js`. `App.js` ahora renderiza `ProfileScreen`, donde se ven dos
-`ProfileCard` con datos distintos para comprobar que el componente es realmente reutilizable.
+**Checkpoint 3: Estado local, eventos y formularios.** Se agregó `AddTaskScreen`, un
+formulario controlado con `useState`. Los dos campos viven en un único objeto de estado que
+se actualiza con el operador spread, sin mutar el estado anterior. La validación exige un
+título de al menos 3 caracteres y una descripción no vacía, y los mensajes de error solo
+aparecen cuando el campo ya fue tocado (`onBlur`), para no regañar al usuario mientras
+escribe. Al enviar, la tarea se imprime por consola con `console.log` y el formulario se
+limpia.
 
 ## Estructura del proyecto
 
 ```
 taskflow-app/
-├── App.js                        # Punto de entrada, renderiza ProfileScreen
+├── App.js                        # Punto de entrada, renderiza AddTaskScreen
 ├── src/
 │   ├── components/
 │   │   ├── WelcomeScreen.js       # Pantalla del Checkpoint 1
 │   │   └── ProfileCard.js         # Tarjeta reutilizable (props: name, role, image)
 │   ├── screens/
+│   │   ├── AddTaskScreen.js       # Formulario controlado con validación
 │   │   ├── HomeScreen.js          # Placeholder de la futura lista de tareas
 │   │   └── ProfileScreen.js       # Muestra ProfileCard con datos de prueba
 │   ├── constants/
@@ -45,7 +48,7 @@ taskflow-app/
 
 ## Próximos pasos
 
-- Módulo 3-4: formularios y listas dinámicas.
+- Módulo 4: listas dinámicas y pantalla de detalle.
 - Módulo 5: navegación entre pantallas.
 - Módulo 6: estado global con Redux Toolkit.
 - Módulo 7: persistencia con Firebase.
