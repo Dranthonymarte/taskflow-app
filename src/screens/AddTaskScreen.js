@@ -30,7 +30,7 @@ function validar(valores) {
   return errores;
 }
 
-export default function AddTaskScreen() {
+export default function AddTaskScreen({ onGuardar, onCancelar }) {
   const [valores, setValores] = useState(FORMULARIO_VACIO);
   const [tocados, setTocados] = useState({});
   const [guardada, setGuardada] = useState(null);
@@ -62,6 +62,10 @@ export default function AddTaskScreen() {
 
     console.log('Tarea creada:', tarea);
 
+    if (onGuardar) {
+      onGuardar(tarea);
+    }
+
     setValores(FORMULARIO_VACIO);
     setTocados({});
     setGuardada(tarea.titulo);
@@ -76,6 +80,12 @@ export default function AddTaskScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+        {onCancelar ? (
+          <Pressable style={styles.volver} onPress={onCancelar}>
+            <Text style={styles.textoVolver}>‹ Volver</Text>
+          </Pressable>
+        ) : null}
+
         <Text style={styles.titulo}>Nueva tarea</Text>
         <Text style={styles.subtitulo}>Completá los datos para agregarla a tu lista</Text>
 
@@ -126,6 +136,14 @@ const styles = StyleSheet.create({
   scroll: {
     padding: 24,
     paddingTop: 72,
+  },
+  volver: {
+    marginBottom: 12,
+  },
+  textoVolver: {
+    fontSize: 16,
+    color: colors.primary,
+    fontWeight: '600',
   },
   titulo: {
     fontSize: 24,

@@ -5,29 +5,35 @@ construida con React Native y Expo.
 
 ## Estado actual
 
-**Checkpoint 3: Estado local, eventos y formularios.** Se agregó `AddTaskScreen`, un
-formulario controlado con `useState`. Los dos campos viven en un único objeto de estado que
-se actualiza con el operador spread, sin mutar el estado anterior. La validación exige un
-título de al menos 3 caracteres y una descripción no vacía, y los mensajes de error solo
-aparecen cuando el campo ya fue tocado (`onBlur`), para no regañar al usuario mientras
-escribe. Al enviar, la tarea se imprime por consola con `console.log` y el formulario se
-limpia.
+**Checkpoint 4: Listas, renderizado y detalle de elementos.** La lista de tareas ahora se
+dibuja con `FlatList`, que solo renderiza lo que entra en pantalla. Cada fila usa el `id` de
+la tarea como clave estable en `keyExtractor` (nunca el índice). Al tocar una fila se abre el
+detalle: la lista entrega **solo el id**, y la pantalla de detalle busca la tarea a partir de
+ese id, que es el patrón maestro-detalle que se usará más adelante con parámetros de ruta.
+Cuando no queda ninguna tarea, en lugar de una pantalla en blanco aparece el componente
+`EmptyState`. Desde el detalle se puede marcar la tarea como completada o eliminarla.
 
 ## Estructura del proyecto
 
 ```
 taskflow-app/
-├── App.js                        # Punto de entrada, renderiza AddTaskScreen
+├── App.js                        # Punto de entrada: estado de las tareas y pantalla activa
 ├── src/
 │   ├── components/
 │   │   ├── WelcomeScreen.js       # Pantalla del Checkpoint 1
-│   │   └── ProfileCard.js         # Tarjeta reutilizable (props: name, role, image)
+│   │   ├── ProfileCard.js         # Tarjeta reutilizable (props: name, role, image)
+│   │   ├── TaskItem.js            # Fila de la lista de tareas
+│   │   └── EmptyState.js          # Mensaje cuando no hay tareas
 │   ├── screens/
+│   │   ├── TaskListScreen.js      # Lista con FlatList y estado vacío
+│   │   ├── TaskDetailScreen.js    # Detalle de una tarea
 │   │   ├── AddTaskScreen.js       # Formulario controlado con validación
 │   │   ├── HomeScreen.js          # Placeholder de la futura lista de tareas
 │   │   └── ProfileScreen.js       # Muestra ProfileCard con datos de prueba
 │   ├── constants/
 │   │   └── colors.js              # Paleta de colores de TaskFlow
+│   ├── data/
+│   │   └── tareasIniciales.js     # Datos de ejemplo
 │   ├── assets/                    # Imágenes y fuentes locales
 │   └── theme/                     # Reservado para próximos módulos
 └── assets/                        # Assets generados por Expo (ícono, splash)
@@ -48,7 +54,6 @@ taskflow-app/
 
 ## Próximos pasos
 
-- Módulo 4: listas dinámicas y pantalla de detalle.
-- Módulo 5: navegación entre pantallas.
+- Módulo 5: navegación real entre pantallas con React Navigation.
 - Módulo 6: estado global con Redux Toolkit.
 - Módulo 7: persistencia con Firebase.
