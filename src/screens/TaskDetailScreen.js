@@ -1,6 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectTareaPorId, toggleTaskStatus, deleteTask } from '../store/tasksSlice';
+import { actualizarEstado, borrarTarea } from '../services/tasksService';
 import { colors } from '../constants/colors';
 
 export default function TaskDetailScreen({ route, navigation }) {
@@ -16,8 +17,18 @@ export default function TaskDetailScreen({ route, navigation }) {
     );
   }
 
+  const alternar = () => {
+    dispatch(toggleTaskStatus(tarea.id));
+    actualizarEstado(tarea.id, !tarea.completada).catch((error) =>
+      console.log('No se pudo actualizar la tarea:', error.message)
+    );
+  };
+
   const borrar = () => {
     dispatch(deleteTask(tarea.id));
+    borrarTarea(tarea.id).catch((error) =>
+      console.log('No se pudo borrar la tarea:', error.message)
+    );
     navigation.goBack();
   };
 
@@ -33,7 +44,7 @@ export default function TaskDetailScreen({ route, navigation }) {
 
       <Pressable
         style={({ pressed }) => [styles.boton, pressed && styles.botonPresionado]}
-        onPress={() => dispatch(toggleTaskStatus(tarea.id))}
+        onPress={alternar}
       >
         <Text style={styles.textoBoton}>
           {tarea.completada ? 'Marcar como pendiente' : 'Marcar como completada'}

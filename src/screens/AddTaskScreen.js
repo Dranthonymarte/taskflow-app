@@ -9,8 +9,10 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addTask } from '../store/tasksSlice';
+import { selectUsuario } from '../store/authSlice';
+import { crearTarea, nuevoId } from '../services/tasksService';
 import { colors } from '../constants/colors';
 
 const FORMULARIO_VACIO = { titulo: '', descripcion: '' };
@@ -34,6 +36,7 @@ function validar(valores) {
 
 export default function AddTaskScreen({ navigation }) {
   const dispatch = useDispatch();
+  const usuario = useSelector(selectUsuario);
   const [valores, setValores] = useState(FORMULARIO_VACIO);
   const [tocados, setTocados] = useState({});
 
@@ -56,14 +59,18 @@ export default function AddTaskScreen({ navigation }) {
     }
 
     const tarea = {
-      id: `${Date.now()}`,
+      id: nuevoId(),
       titulo: valores.titulo.trim(),
       descripcion: valores.descripcion.trim(),
       completada: false,
+      creadaEn: new Date().toISOString(),
     };
 
     console.log('Tarea creada:', tarea);
     dispatch(addTask(tarea));
+    crearTarea(usuario.uid, tarea).catch((error) =>
+      console.log('No se pudo guardar la tarea:', error.message)
+    );
 
     setValores(FORMULARIO_VACIO);
     setTocados({});

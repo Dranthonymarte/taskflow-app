@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { View, Text, FlatList, Pressable, StyleSheet } from 'react-native';
+import { View, Text, FlatList, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import TaskItem from '../components/TaskItem';
 import TaskFilters from '../components/TaskFilters';
@@ -8,6 +8,7 @@ import {
   selectLista,
   selectFiltro,
   selectPendientes,
+  selectCargando,
   setFilter,
 } from '../store/tasksSlice';
 import { colors } from '../constants/colors';
@@ -22,6 +23,7 @@ export default function TaskListScreen({ navigation }) {
   const tareas = useSelector(selectLista);
   const filtro = useSelector(selectFiltro);
   const pendientes = useSelector(selectPendientes);
+  const cargando = useSelector(selectCargando);
   const dispatch = useDispatch();
 
   const visibles = useMemo(() => {
@@ -67,7 +69,11 @@ export default function TaskListScreen({ navigation }) {
         renderItem={({ item }) => <TaskItem tarea={item} onPress={abrirDetalle} />}
         contentContainerStyle={styles.lista}
         ListEmptyComponent={
-          <EmptyState titulo="Nada por acá" mensaje={MENSAJES_VACIO[filtro]} />
+          cargando ? (
+            <ActivityIndicator style={styles.cargando} size="large" color={colors.primary} />
+          ) : (
+            <EmptyState titulo="Nada por acá" mensaje={MENSAJES_VACIO[filtro]} />
+          )
         }
       />
     </View>
@@ -107,6 +113,9 @@ const styles = StyleSheet.create({
     fontSize: 26,
     lineHeight: 30,
     fontWeight: '600',
+  },
+  cargando: {
+    marginTop: 60,
   },
   lista: {
     paddingHorizontal: 20,

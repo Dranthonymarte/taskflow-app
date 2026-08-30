@@ -1,0 +1,37 @@
+rules_version = '2';
+
+// Reglas de seguridad de Firestore para TaskFlow.
+//
+// Cómo aplicarlas: consola de Firebase -> Firestore Database -> pestaña Reglas
+// -> pegar este contenido -> Publicar.
+//
+// Reemplazan al "modo de prueba", que deja la base abierta a cualquiera y
+// además caduca a los 30 días.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /tareas/{tareaId} {
+      // Solo se leen las tareas propias.
+      allow read: if request.auth != null
+                  && resource.data.userId == request.auth.uid;
+
+      // Al crear, la tarea tiene que quedar a nombre de quien la crea.
+      allow create: if request.auth != null
+                    && request.resource.data.userId == request.auth.uid;
+
+      // Solo el dueño puede modificar o borrar, y no puede cambiar el dueño.
+      allow update: if request.auth != null
+                    && resource.data.userId == request.auth.uid
+                    && request.resource.data.userId == request.auth.uid;
+
+      allow delete: if request.auth != null
+                    && resource.data.userId == request.auth.uid;
+    }
+
+    // Todo lo que no esté declarado arriba queda prohibido.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

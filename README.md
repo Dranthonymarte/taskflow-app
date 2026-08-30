@@ -16,46 +16,72 @@ proyecto tal como quedó al cerrar un módulo puntual, entrar por su enlace.
 | 4 | Lista con FlatList, detalle y estado vacío | [checkpoint-4](https://github.com/Dranthonymarte/taskflow-app/tree/checkpoint-4) |
 | 5 | Navegación con pestañas y stack anidado | [checkpoint-5](https://github.com/Dranthonymarte/taskflow-app/tree/checkpoint-5) |
 | 6 | Estado global con Redux Toolkit | [checkpoint-6](https://github.com/Dranthonymarte/taskflow-app/tree/checkpoint-6) |
+| 7 | Autenticación y persistencia con Firebase | [checkpoint-7](https://github.com/Dranthonymarte/taskflow-app/tree/checkpoint-7) |
 
 ## Estado actual
 
-**Checkpoint 6: Redux Toolkit y estado global.** El contexto de React que compartía las
-tareas se reemplazó por un store de Redux Toolkit. El slice `tasks` concentra las cuatro
-acciones del dominio (`addTask`, `toggleTaskStatus`, `deleteTask` y `setFilter`); dentro de
-los reducers el estado se escribe como si se mutara porque Immer, incluido en Redux Toolkit,
-se encarga de mantenerlo inmutable. Las pantallas ya no guardan tareas en `useState`: leen
-con `useSelector` a través de selectores específicos y escriben con `useDispatch`. El filtro
-(todas / pendientes / completadas) también vive en el store, así que se mantiene al navegar
-al detalle y volver.
+**Checkpoint 7: Firebase, autenticación y persistencia de datos.** TaskFlow dejó de ser una
+app con datos de ejemplo: ahora cada persona tiene su cuenta y sus tareas viven en la nube.
+
+- **Registro e inicio de sesión** con correo y contraseña (Firebase Authentication). Los dos
+  formularios comparten el componente `AuthForm` y traducen los códigos de error de Firebase
+  a mensajes en castellano.
+- **Sesión persistente**: `initializeAuth` se configura con `AsyncStorage`, así que al cerrar
+  y reabrir la app la sesión sigue abierta. Con `getAuth()` a secas se perdería en cada
+  arranque.
+- **Rutas protegidas**: `RootNavigator` decide qué mostrar según haya sesión o no. Sin
+  sesión solo existe el stack de login; con sesión, las pestañas completas. Mientras Firebase
+  comprueba si había una sesión guardada se muestra un indicador de carga, para no mostrarle
+  el login por un instante a alguien que ya estaba conectado.
+- **Tareas en Firestore filtradas por usuario**: `onSnapshot` con
+  `where('userId', '==', uid)` mantiene la lista sincronizada en tiempo real y trae
+  únicamente las tareas propias.
+- **Listeners con limpieza**: tanto `onAuthStateChanged` como `onSnapshot` devuelven su
+  función de cancelación desde el `useEffect`, para no dejar escuchas colgadas.
+- Las acciones del store (`addTask`, `toggleTaskStatus`, `deleteTask`) siguen usándose para
+  que la pantalla responda al instante, mientras la escritura en Firestore viaja en paralelo
+  y `setTasks` reconcilia con lo que confirma el servidor.
 
 ## Estructura del proyecto
 
 ```
 taskflow-app/
 ├── App.js                        # Provider de Redux + navegador raíz
+├── firestore.rules               # Reglas de seguridad para cerrar la base
 ├── src/
+│   ├── services/
+│   │   ├── firebase.js            # Inicialización de Firebase, Auth y Firestore
+│   │   ├── authService.js         # Registro, inicio y cierre de sesión
+│   │   └── tasksService.js        # Lectura en vivo y escritura de tareas
+│   ├── hooks/
+│   │   ├── useAuthListener.js     # Escucha el estado de la sesión
+│   │   └── useTasksSync.js        # Sincroniza las tareas del usuario
 │   ├── store/
 │   │   ├── index.js               # configureStore
-│   │   └── tasksSlice.js          # Slice de tareas, acciones y selectores
+│   │   ├── tasksSlice.js          # Slice de tareas, acciones y selectores
+│   │   └── authSlice.js           # Slice de sesión
 │   ├── navigation/
-│   │   ├── RootNavigator.js       # NavigationContainer + Bottom Tabs
+│   │   ├── RootNavigator.js       # Decide entre login y app según la sesión
+│   │   ├── AuthNavigator.js       # Stack de login y registro
+│   │   ├── MainTabsNavigator.js   # Pestañas Tareas y Perfil
 │   │   └── TasksStackNavigator.js # Stack anidado de la pestaña Tareas
 │   ├── components/
-│   │   ├── WelcomeScreen.js       # Pantalla del Checkpoint 1
+│   │   ├── AuthForm.js            # Formulario compartido de login y registro
 │   │   ├── ProfileCard.js         # Tarjeta reutilizable (props: name, role, image)
 │   │   ├── TaskItem.js            # Fila de la lista de tareas
 │   │   ├── TaskFilters.js         # Chips de filtrado conectados al store
-│   │   └── EmptyState.js          # Mensaje cuando no hay tareas
+│   │   ├── EmptyState.js          # Mensaje cuando no hay tareas
+│   │   └── WelcomeScreen.js       # Pantalla del Checkpoint 1
 │   ├── screens/
+│   │   ├── LoginScreen.js         # Inicio de sesión
+│   │   ├── RegisterScreen.js      # Creación de cuenta
 │   │   ├── TaskListScreen.js      # Lista con FlatList, filtros y estado vacío
 │   │   ├── TaskDetailScreen.js    # Detalle, recibe el id por route.params
 │   │   ├── AddTaskScreen.js       # Formulario controlado con validación
-│   │   ├── HomeScreen.js          # Placeholder del Checkpoint 2
-│   │   └── ProfileScreen.js       # Muestra ProfileCard con datos de prueba
+│   │   ├── ProfileScreen.js       # Datos del usuario y cierre de sesión
+│   │   └── HomeScreen.js          # Placeholder del Checkpoint 2
 │   ├── constants/
 │   │   └── colors.js              # Paleta de colores de TaskFlow
-│   ├── data/
-│   │   └── tareasIniciales.js     # Datos de ejemplo
 │   ├── assets/                    # Imágenes y fuentes locales
 │   └── theme/                     # Reservado para próximos módulos
 └── assets/                        # Assets generados por Expo (ícono, splash)
@@ -66,10 +92,12 @@ taskflow-app/
 | Paquete | Para qué se usa |
 |---|---|
 | `expo` / `react-native` | Base del proyecto (Managed Workflow, SDK 54) |
+| `firebase` | Authentication y Firestore (SDK Web, el compatible con Expo Go) |
+| `@react-native-async-storage/async-storage` | Guarda la sesión entre arranques de la app |
 | `@reduxjs/toolkit` | Store global, `configureStore` y `createSlice` |
 | `react-redux` | Hooks `useSelector` y `useDispatch` en las pantallas |
 | `@react-navigation/native` | Contenedor de navegación |
-| `@react-navigation/native-stack` | Stack de la pestaña Tareas |
+| `@react-navigation/native-stack` | Stacks de login y de tareas |
 | `@react-navigation/bottom-tabs` | Pestañas inferiores |
 | `react-native-screens` · `react-native-safe-area-context` | Requisitos nativos de React Navigation |
 
@@ -85,7 +113,21 @@ taskflow-app/
    ```
 3. Escanear el código QR que aparece en la terminal con la app **Expo Go**
    (disponible en App Store / Google Play) para ver la aplicación en tu teléfono.
+4. Crear una cuenta desde la pantalla de registro. El correo no necesita ser real:
+   Firebase no lo verifica en este modo.
+
+## Sobre las claves de Firebase
+
+El objeto `firebaseConfig` de `src/services/firebase.js` está en el repositorio a propósito.
+No es información secreta: identifica al proyecto y viaja dentro de cualquier app publicada,
+donde cualquiera puede leerlo. Lo que protege los datos son las reglas de seguridad, no ese
+archivo.
+
+La base se creó en **modo de prueba**, que deja leer y escribir a cualquiera y caduca a los
+30 días. El archivo `firestore.rules` contiene las reglas definitivas, que limitan cada tarea
+a su dueño. Para aplicarlas: consola de Firebase → Firestore Database → pestaña **Reglas** →
+pegar el contenido del archivo → **Publicar**.
 
 ## Próximos pasos
 
-- Módulo 7: autenticación y persistencia con Firebase.
+- Módulo 8: foto de perfil con la cámara del dispositivo y entrega final.

@@ -1,15 +1,22 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { tareasIniciales } from '../data/tareasIniciales';
 
 const estadoInicial = {
-  lista: tareasIniciales,
+  lista: [],
   filtro: 'todas',
+  cargando: true,
 };
 
 const tasksSlice = createSlice({
   name: 'tasks',
   initialState: estadoInicial,
   reducers: {
+    // Reemplaza la lista completa con lo que llega desde Firestore.
+    setTasks: (state, action) => {
+      state.lista = action.payload;
+      state.cargando = false;
+    },
+    // Las tres acciones siguientes actualizan la pantalla al instante, sin
+    // esperar la respuesta de la nube. Firestore confirma después con setTasks.
     addTask: (state, action) => {
       state.lista.unshift(action.payload);
     },
@@ -26,14 +33,27 @@ const tasksSlice = createSlice({
     setFilter: (state, action) => {
       state.filtro = action.payload;
     },
+    limpiarTareas: (state) => {
+      state.lista = [];
+      state.cargando = true;
+    },
   },
 });
 
-export const { addTask, toggleTaskStatus, deleteTask, setFilter } = tasksSlice.actions;
+export const {
+  setTasks,
+  addTask,
+  toggleTaskStatus,
+  deleteTask,
+  setFilter,
+  limpiarTareas,
+} = tasksSlice.actions;
 
 export const selectLista = (state) => state.tasks.lista;
 
 export const selectFiltro = (state) => state.tasks.filtro;
+
+export const selectCargando = (state) => state.tasks.cargando;
 
 export const selectPendientes = (state) =>
   state.tasks.lista.filter((tarea) => !tarea.completada).length;

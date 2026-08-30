@@ -1,51 +1,42 @@
-import { Text, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import TasksStackNavigator from './TasksStackNavigator';
-import ProfileScreen from '../screens/ProfileScreen';
+import AuthNavigator from './AuthNavigator';
+import MainTabsNavigator from './MainTabsNavigator';
+import { useAuthListener } from '../hooks/useAuthListener';
+import { useTasksSync } from '../hooks/useTasksSync';
+import { selectUsuario, selectComprobandoSesion } from '../store/authSlice';
 import { colors } from '../constants/colors';
 
-const Tab = createBottomTabNavigator();
-
-function IconoPestana({ simbolo, color }) {
-  return <Text style={[styles.icono, { color }]}>{simbolo}</Text>;
-}
-
 export default function RootNavigator() {
+  useAuthListener();
+  useTasksSync();
+
+  const usuario = useSelector(selectUsuario);
+  const comprobandoSesion = useSelector(selectComprobandoSesion);
+
+  // Mientras Firebase revisa si había una sesión guardada no se decide nada,
+  // para no mostrar el login un instante a alguien que ya estaba conectado.
+  if (comprobandoSesion) {
+    return (
+      <View style={styles.cargando}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={{
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: colors.textMuted,
-          headerStyle: { backgroundColor: colors.primary },
-          headerTintColor: colors.surface,
-          headerTitleStyle: { fontWeight: '700' },
-        }}
-      >
-        <Tab.Screen
-          name="Tareas"
-          component={TasksStackNavigator}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({ color }) => <IconoPestana simbolo="☰" color={color} />,
-          }}
-        />
-        <Tab.Screen
-          name="Perfil"
-          component={ProfileScreen}
-          options={{
-            title: 'Mi perfil',
-            tabBarIcon: ({ color }) => <IconoPestana simbolo="☺" color={color} />,
-          }}
-        />
-      </Tab.Navigator>
+      {usuario ? <MainTabsNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  icono: {
-    fontSize: 20,
+  cargando: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.background,
   },
 });
