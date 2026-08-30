@@ -113,8 +113,24 @@ taskflow-app/
    ```
 3. Escanear el código QR que aparece en la terminal con la app **Expo Go**
    (disponible en App Store / Google Play) para ver la aplicación en tu teléfono.
-4. Crear una cuenta desde la pantalla de registro. El correo no necesita ser real:
-   Firebase no lo verifica en este modo.
+4. Entrar con la cuenta de demostración o crear una propia desde la pantalla de registro.
+   El correo no necesita ser real: Firebase no lo verifica en este modo.
+
+## Cuenta de demostración
+
+Para probar la app sin tener que registrarse:
+
+| Correo | Contraseña |
+|---|---|
+| `demo@taskflow.com` | `demo123` |
+
+La cuenta ya tiene algunas tareas cargadas, tanto pendientes como completadas, para poder
+ver la lista, los filtros y la pantalla de detalle sin cargar nada a mano.
+
+Es una cuenta compartida y de prueba, así que su contenido puede variar según quién la haya
+usado antes. Para probar el aislamiento entre usuarios —que cada cuenta ve solo sus propias
+tareas— conviene registrar una cuenta nueva con cualquier correo: la lista va a aparecer
+vacía, sin las tareas de la demostración.
 
 ## Sobre las claves de Firebase
 
