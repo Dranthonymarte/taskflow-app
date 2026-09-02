@@ -14,7 +14,7 @@ import {
 import { colors } from '../constants/colors';
 
 const MENSAJES_VACIO = {
-  todas: 'No tenés tareas cargadas. Tocá el botón + para crear la primera.',
+  todas: '¡No tienes tareas pendientes! Empieza por crear una arriba.',
   pendientes: 'No te queda ninguna tarea pendiente.',
   completadas: 'Todavía no completaste ninguna tarea.',
 };
