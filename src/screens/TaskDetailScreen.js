@@ -4,6 +4,37 @@ import { selectTareaPorId, toggleTaskStatus, deleteTask } from '../store/tasksSl
 import { actualizarEstado, borrarTarea } from '../services/tasksService';
 import { colors } from '../constants/colors';
 
+const MESES = [
+  'enero',
+  'febrero',
+  'marzo',
+  'abril',
+  'mayo',
+  'junio',
+  'julio',
+  'agosto',
+  'septiembre',
+  'octubre',
+  'noviembre',
+  'diciembre',
+];
+
+// Las tareas guardadas antes de que existiera el campo pueden no traer la fecha, y
+// new Date(undefined) pintaría 'Invalid Date' en pantalla. Si no se puede leer, no se muestra.
+function formatearFecha(valor) {
+  if (!valor) {
+    return null;
+  }
+
+  const fecha = new Date(valor);
+
+  if (Number.isNaN(fecha.getTime())) {
+    return null;
+  }
+
+  return `${fecha.getDate()} de ${MESES[fecha.getMonth()]} de ${fecha.getFullYear()}`;
+}
+
 export default function TaskDetailScreen({ route, navigation }) {
   const { tareaId } = route.params;
   const tarea = useSelector(selectTareaPorId(tareaId));
@@ -16,6 +47,8 @@ export default function TaskDetailScreen({ route, navigation }) {
       </View>
     );
   }
+
+  const creada = formatearFecha(tarea.creadaEn);
 
   const alternar = () => {
     dispatch(toggleTaskStatus(tarea.id));
@@ -40,6 +73,7 @@ export default function TaskDetailScreen({ route, navigation }) {
         </Text>
         <Text style={styles.titulo}>{tarea.titulo}</Text>
         <Text style={styles.descripcion}>{tarea.descripcion}</Text>
+        {creada ? <Text style={styles.fecha}>Creada el {creada}</Text> : null}
       </View>
 
       <Pressable
@@ -49,6 +83,10 @@ export default function TaskDetailScreen({ route, navigation }) {
         <Text style={styles.textoBoton}>
           {tarea.completada ? 'Marcar como pendiente' : 'Marcar como completada'}
         </Text>
+      </Pressable>
+
+      <Pressable style={styles.botonSecundario} onPress={() => navigation.goBack()}>
+        <Text style={styles.textoVolver}>Volver a la lista</Text>
       </Pressable>
 
       <Pressable style={styles.botonSecundario} onPress={borrar}>
@@ -90,6 +128,11 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     lineHeight: 22,
   },
+  fecha: {
+    fontSize: 13,
+    color: colors.textMuted,
+    marginTop: 14,
+  },
   boton: {
     backgroundColor: colors.primary,
     borderRadius: 12,
@@ -109,6 +152,11 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: 'center',
     marginTop: 8,
+  },
+  textoVolver: {
+    color: colors.primary,
+    fontSize: 15,
+    fontWeight: '600',
   },
   textoBotonSecundario: {
     color: colors.danger,
