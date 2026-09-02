@@ -8,6 +8,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTask } from '../store/tasksSlice';
@@ -16,7 +17,8 @@ import { crearTarea, nuevoId } from '../services/tasksService';
 import { colors } from '../constants/colors';
 
 const FORMULARIO_VACIO = { titulo: '', descripcion: '' };
-const TITULO_MINIMO = 3;
+const TITULO_MINIMO = 5;
+const DESCRIPCION_MINIMA = 10;
 
 function validar(valores) {
   const errores = {};
@@ -29,6 +31,8 @@ function validar(valores) {
 
   if (valores.descripcion.trim().length === 0) {
     errores.descripcion = 'La descripción es obligatoria';
+  } else if (valores.descripcion.trim().length < DESCRIPCION_MINIMA) {
+    errores.descripcion = `La descripción necesita al menos ${DESCRIPCION_MINIMA} caracteres`;
   }
 
   return errores;
@@ -71,6 +75,8 @@ export default function AddTaskScreen({ navigation }) {
     crearTarea(usuario.uid, tarea).catch((error) =>
       console.log('No se pudo guardar la tarea:', error.message)
     );
+
+    Alert.alert('Éxito', 'Tarea capturada localmente');
 
     setValores(FORMULARIO_VACIO);
     setTocados({});
