@@ -5,12 +5,14 @@ import AuthNavigator from './AuthNavigator';
 import MainTabsNavigator from './MainTabsNavigator';
 import { useAuthListener } from '../hooks/useAuthListener';
 import { useTasksSync } from '../hooks/useTasksSync';
+import { useProfileSync } from '../hooks/useProfileSync';
 import { selectUsuario, selectComprobandoSesion } from '../store/authSlice';
 import { colors } from '../constants/colors';
 
 export default function RootNavigator() {
   useAuthListener();
   useTasksSync();
+  useProfileSync();
 
   const usuario = useSelector(selectUsuario);
   const comprobandoSesion = useSelector(selectComprobandoSesion);
