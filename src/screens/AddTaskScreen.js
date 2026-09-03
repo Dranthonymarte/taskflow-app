@@ -9,16 +9,22 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { addTask } from '../store/tasksSlice';
+import { addTask, deleteTask } from '../store/tasksSlice';
 import { selectUsuario } from '../store/authSlice';
 import { crearTarea, nuevoId } from '../services/tasksService';
+import { conTiempoLimite } from '../utils/promesas';
 import { colors } from '../constants/colors';
 
 const FORMULARIO_VACIO = { titulo: '', descripcion: '' };
 const TITULO_MINIMO = 5;
 const DESCRIPCION_MINIMA = 10;
+
+// Firestore encola las escrituras cuando no hay red, así que sin este límite el
+// botón se quedaría girando para siempre.
+const ESPERA_MAXIMA = 6000;
 
 function validar(valores) {
   const errores = {};
@@ -43,6 +49,7 @@ export default function AddTaskScreen({ navigation }) {
   const usuario = useSelector(selectUsuario);
   const [valores, setValores] = useState(FORMULARIO_VACIO);
   const [tocados, setTocados] = useState({});
+  const [guardando, setGuardando] = useState(false);
 
   const errores = validar(valores);
   const hayErrores = Object.keys(errores).length > 0;
@@ -55,10 +62,10 @@ export default function AddTaskScreen({ navigation }) {
     setTocados((anteriores) => ({ ...anteriores, [campo]: true }));
   };
 
-  const enviar = () => {
+  const enviar = async () => {
     setTocados({ titulo: true, descripcion: true });
 
-    if (hayErrores) {
+    if (hayErrores || guardando) {
       return;
     }
 
@@ -70,14 +77,31 @@ export default function AddTaskScreen({ navigation }) {
       creadaEn: new Date().toISOString(),
     };
 
-    console.log('Tarea creada:', tarea);
+    setGuardando(true);
+
+    // Se agrega primero al store para que la lista responda al instante, y
+    // recién después se espera la confirmación de la nube.
     dispatch(addTask(tarea));
-    crearTarea(usuario.uid, tarea).catch((error) =>
-      console.log('No se pudo guardar la tarea:', error.message)
-    );
 
-    Alert.alert('Éxito', 'Tarea capturada localmente');
+    try {
+      await conTiempoLimite(crearTarea(usuario.uid, tarea), ESPERA_MAXIMA);
+      Alert.alert('Éxito', 'Tarea capturada localmente');
+    } catch (error) {
+      if (error.name === 'TiempoAgotado') {
+        // Firestore la dejó encolada y la va a subir sola cuando vuelva la red,
+        // así que la tarea se conserva y el formulario sigue su curso.
+        Alert.alert('Sin conexión', 'Guardamos la tarea y se sincronizará cuando vuelva internet.');
+      } else {
+        // Acá falló de verdad: se deshace el agregado optimista y la persona se
+        // queda en el formulario, con lo que había escrito todavía a la vista.
+        dispatch(deleteTask(tarea.id));
+        Alert.alert('No se pudo guardar', 'Revisá tu conexión e intentá otra vez.');
+        setGuardando(false);
+        return;
+      }
+    }
 
+    setGuardando(false);
     setValores(FORMULARIO_VACIO);
     setTocados({});
     navigation.navigate('TaskList');
@@ -120,10 +144,19 @@ export default function AddTaskScreen({ navigation }) {
         {errorDescripcion ? <Text style={styles.error}>{errorDescripcion}</Text> : null}
 
         <Pressable
-          style={({ pressed }) => [styles.boton, pressed && styles.botonPresionado]}
+          style={({ pressed }) => [
+            styles.boton,
+            pressed && styles.botonPresionado,
+            guardando && styles.botonInactivo,
+          ]}
           onPress={enviar}
+          disabled={guardando}
         >
-          <Text style={styles.textoBoton}>Guardar tarea</Text>
+          {guardando ? (
+            <ActivityIndicator color={colors.surface} />
+          ) : (
+            <Text style={styles.textoBoton}>Guardar tarea</Text>
+          )}
         </Pressable>
 
       </ScrollView>
@@ -196,6 +229,9 @@ const styles = StyleSheet.create({
   },
   botonPresionado: {
     opacity: 0.85,
+  },
+  botonInactivo: {
+    opacity: 0.6,
   },
   textoBoton: {
     color: colors.surface,

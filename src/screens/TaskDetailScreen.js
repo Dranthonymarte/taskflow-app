@@ -1,7 +1,9 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectTareaPorId, toggleTaskStatus, deleteTask } from '../store/tasksSlice';
+import { selectTareaPorId, toggleTaskStatus, deleteTask, addTask } from '../store/tasksSlice';
 import { actualizarEstado, borrarTarea } from '../services/tasksService';
+import { conTiempoLimite } from '../utils/promesas';
 import { colors } from '../constants/colors';
 
 const MESES = [
@@ -21,6 +23,10 @@ const MESES = [
 
 // Las tareas guardadas antes de que existiera el campo pueden no traer la fecha, y
 // new Date(undefined) pintaría 'Invalid Date' en pantalla. Si no se puede leer, no se muestra.
+// Mismo límite que en el formulario: sin red, Firestore encola la escritura y
+// la promesa nunca resolvería.
+const ESPERA_MAXIMA = 6000;
+
 function formatearFecha(valor) {
   if (!valor) {
     return null;
@@ -40,6 +46,10 @@ export default function TaskDetailScreen({ route, navigation }) {
   const tarea = useSelector(selectTareaPorId(tareaId));
   const dispatch = useDispatch();
 
+  // Este useState va antes del return de abajo a propósito: si se declarara
+  // después, al desaparecer la tarea React contaría menos hooks y reventaría.
+  const [procesando, setProcesando] = useState(false);
+
   if (!tarea) {
     return (
       <View style={styles.contenedor}>
@@ -50,19 +60,45 @@ export default function TaskDetailScreen({ route, navigation }) {
 
   const creada = formatearFecha(tarea.creadaEn);
 
-  const alternar = () => {
+  const alternar = async () => {
+    if (procesando) {
+      return;
+    }
+
+    setProcesando(true);
     dispatch(toggleTaskStatus(tarea.id));
-    actualizarEstado(tarea.id, !tarea.completada).catch((error) =>
-      console.log('No se pudo actualizar la tarea:', error.message)
-    );
+
+    try {
+      await conTiempoLimite(actualizarEstado(tarea.id, !tarea.completada), ESPERA_MAXIMA);
+    } catch (error) {
+      if (error.name !== 'TiempoAgotado') {
+        // Deshacer es volver a alternar: la acción es su propia inversa.
+        dispatch(toggleTaskStatus(tarea.id));
+        Alert.alert('No se pudo actualizar', 'Revisá tu conexión e intentá otra vez.');
+      }
+    } finally {
+      setProcesando(false);
+    }
   };
 
-  const borrar = () => {
+  const borrar = async () => {
+    if (procesando) {
+      return;
+    }
+
+    setProcesando(true);
     dispatch(deleteTask(tarea.id));
-    borrarTarea(tarea.id).catch((error) =>
-      console.log('No se pudo borrar la tarea:', error.message)
-    );
     navigation.goBack();
+
+    try {
+      await conTiempoLimite(borrarTarea(tarea.id), ESPERA_MAXIMA);
+    } catch (error) {
+      if (error.name !== 'TiempoAgotado') {
+        // Falló de verdad: se devuelve la tarea a la lista y se avisa.
+        dispatch(addTask(tarea));
+        Alert.alert('No se pudo eliminar', 'La tarea sigue en tu lista.');
+      }
+    }
   };
 
   return (
@@ -79,6 +115,7 @@ export default function TaskDetailScreen({ route, navigation }) {
       <Pressable
         style={({ pressed }) => [styles.boton, pressed && styles.botonPresionado]}
         onPress={alternar}
+        disabled={procesando}
       >
         <Text style={styles.textoBoton}>
           {tarea.completada ? 'Marcar como pendiente' : 'Marcar como completada'}
@@ -89,7 +126,7 @@ export default function TaskDetailScreen({ route, navigation }) {
         <Text style={styles.textoVolver}>Volver a la lista</Text>
       </Pressable>
 
-      <Pressable style={styles.botonSecundario} onPress={borrar}>
+      <Pressable style={styles.botonSecundario} onPress={borrar} disabled={procesando}>
         <Text style={styles.textoBotonSecundario}>Eliminar tarea</Text>
       </Pressable>
     </View>
