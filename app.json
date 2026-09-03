@@ -26,9 +26,17 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "TaskFlow necesita acceso a tus fotos para que puedas elegir tu foto de perfil."
+          "photosPermission": "TaskFlow necesita acceso a tus fotos para que puedas elegir tu foto de perfil.",
+          "cameraPermission": false,
+          "microphonePermission": false
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "6849d367-c3c8-4173-9eae-242b09c8a15d"
+      }
+    },
+    "owner": "dranthonymarte"
   }
 }
