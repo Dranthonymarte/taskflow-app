@@ -299,7 +299,7 @@ al cerrar un módulo puntual, entrar por su enlace.
 | 5 | Navegación con pestañas y stack anidado | [checkpoint-5](https://github.com/Dranthonymarte/taskflow-app/tree/checkpoint-5) |
 | 6 | Estado global con Redux Toolkit | [checkpoint-6](https://github.com/Dranthonymarte/taskflow-app/tree/checkpoint-6) |
 | 7 | Autenticación y persistencia con Firebase | [checkpoint-7](https://github.com/Dranthonymarte/taskflow-app/tree/checkpoint-7) |
-| 8 | Avatar, robustez, limpieza y publicación | Esta rama |
+| 8 | Avatar, robustez, limpieza y publicación | [checkpoint-8](https://github.com/Dranthonymarte/taskflow-app/tree/checkpoint-8) |
 
 Una aclaración sobre el Módulo 4: la consigna proponía alternar entre la lista y el detalle con
 un estado `selectedTask`, porque en ese punto todavía no habíamos visto React Navigation. Al
