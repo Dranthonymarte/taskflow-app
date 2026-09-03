@@ -1,15 +1,17 @@
 {
   "expo": {
-    "name": "taskflow-app",
+    "name": "TaskFlow",
     "slug": "taskflow-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.dranthonymarte.taskflow"
     },
     "android": {
+      "package": "com.dranthonymarte.taskflow",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -19,6 +21,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "TaskFlow necesita acceso a tus fotos para que puedas elegir tu foto de perfil."
+        }
+      ]
+    ]
   }
 }

@@ -1,10 +1,60 @@
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { colors } from '../constants/colors';
 
-export default function ProfileCard({ name, role, image }) {
+// Dos letras sacadas del nombre, para cuando todavía no hay foto que mostrar.
+function iniciales(texto) {
+  if (!texto) {
+    return '?';
+  }
+
+  return texto
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((palabra) => palabra[0])
+    .join('')
+    .toUpperCase();
+}
+
+export default function ProfileCard({ name, role, image, onPressAvatar }) {
+  const [falloImagen, setFalloImagen] = useState(false);
+
+  // Cuando llega una foto nueva hay que volver a intentar: puede que la
+  // anterior fallara y esta sí cargue.
+  useEffect(() => {
+    setFalloImagen(false);
+  }, [image]);
+
+  const hayFoto = Boolean(image) && !falloImagen;
+
   return (
     <View style={styles.card}>
-      <Image source={{ uri: image }} style={styles.avatar} />
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={onPressAvatar}
+        disabled={!onPressAvatar}
+        style={styles.zonaAvatar}
+      >
+        {hayFoto ? (
+          <Image
+            source={{ uri: image }}
+            style={styles.avatar}
+            onError={() => setFalloImagen(true)}
+          />
+        ) : (
+          <View style={[styles.avatar, styles.avatarVacio]}>
+            <Text style={styles.avatarIniciales}>{iniciales(name)}</Text>
+          </View>
+        )}
+
+        {onPressAvatar ? (
+          <View style={styles.insignia}>
+            <Text style={styles.insigniaTexto}>Cambiar</Text>
+          </View>
+        ) : null}
+      </TouchableOpacity>
+
       <View style={styles.info}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.role}>{role}</Text>
@@ -27,11 +77,40 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 3,
   },
-  avatar: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+  zonaAvatar: {
     marginRight: 16,
+  },
+  avatar: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+  },
+  avatarVacio: {
+    backgroundColor: colors.primaryPale,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarIniciales: {
+    fontSize: 30,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  insignia: {
+    position: 'absolute',
+    bottom: -2,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+  },
+  insigniaTexto: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: colors.surface,
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    overflow: 'hidden',
   },
   info: {
     flex: 1,
