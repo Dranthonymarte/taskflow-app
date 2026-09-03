@@ -1,4 +1,5 @@
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import AuthNavigator from './AuthNavigator';
@@ -21,9 +22,9 @@ export default function RootNavigator() {
   // para no mostrar el login un instante a alguien que ya estaba conectado.
   if (comprobandoSesion) {
     return (
-      <View style={styles.cargando}>
+      <SafeAreaView style={styles.cargando} edges={['top', 'bottom']}>
         <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      </SafeAreaView>
     );
   }
 

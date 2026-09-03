@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  View,
   Text,
   TextInput,
   Pressable,
@@ -11,6 +10,7 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTask, deleteTask } from '../store/tasksSlice';
 import { selectUsuario } from '../store/authSlice';
@@ -111,56 +111,58 @@ export default function AddTaskScreen({ navigation }) {
   const errorDescripcion = tocados.descripcion ? errores.descripcion : undefined;
 
   return (
-    <KeyboardAvoidingView
-      style={styles.contenedor}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-        <Text style={styles.titulo}>Nueva tarea</Text>
-        <Text style={styles.subtitulo}>Completá los datos para agregarla a tu lista</Text>
+    <SafeAreaView style={styles.contenedor} edges={['left', 'right']}>
+      <KeyboardAvoidingView
+        style={styles.seguro}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+          <Text style={styles.titulo}>Nueva tarea</Text>
+          <Text style={styles.subtitulo}>Completá los datos para agregarla a tu lista</Text>
 
-        <Text style={styles.etiqueta}>Título</Text>
-        <TextInput
-          style={[styles.campo, errorTitulo && styles.campoConError]}
-          value={valores.titulo}
-          onChangeText={(texto) => cambiarCampo('titulo', texto)}
-          onBlur={() => marcarTocado('titulo')}
-          placeholder="Ej: Preparar la reunión del lunes"
-          placeholderTextColor={colors.textMuted}
-        />
-        {errorTitulo ? <Text style={styles.error}>{errorTitulo}</Text> : null}
+          <Text style={styles.etiqueta}>Título</Text>
+          <TextInput
+            style={[styles.campo, errorTitulo && styles.campoConError]}
+            value={valores.titulo}
+            onChangeText={(texto) => cambiarCampo('titulo', texto)}
+            onBlur={() => marcarTocado('titulo')}
+            placeholder="Ej: Preparar la reunión del lunes"
+            placeholderTextColor={colors.textMuted}
+          />
+          {errorTitulo ? <Text style={styles.error}>{errorTitulo}</Text> : null}
 
-        <Text style={styles.etiqueta}>Descripción</Text>
-        <TextInput
-          style={[styles.campo, styles.campoLargo, errorDescripcion && styles.campoConError]}
-          value={valores.descripcion}
-          onChangeText={(texto) => cambiarCampo('descripcion', texto)}
-          onBlur={() => marcarTocado('descripcion')}
-          placeholder="¿Qué hay que hacer exactamente?"
-          placeholderTextColor={colors.textMuted}
-          multiline
-          textAlignVertical="top"
-        />
-        {errorDescripcion ? <Text style={styles.error}>{errorDescripcion}</Text> : null}
+          <Text style={styles.etiqueta}>Descripción</Text>
+          <TextInput
+            style={[styles.campo, styles.campoLargo, errorDescripcion && styles.campoConError]}
+            value={valores.descripcion}
+            onChangeText={(texto) => cambiarCampo('descripcion', texto)}
+            onBlur={() => marcarTocado('descripcion')}
+            placeholder="¿Qué hay que hacer exactamente?"
+            placeholderTextColor={colors.textMuted}
+            multiline
+            textAlignVertical="top"
+          />
+          {errorDescripcion ? <Text style={styles.error}>{errorDescripcion}</Text> : null}
 
-        <Pressable
-          style={({ pressed }) => [
-            styles.boton,
-            pressed && styles.botonPresionado,
-            guardando && styles.botonInactivo,
-          ]}
-          onPress={enviar}
-          disabled={guardando}
-        >
-          {guardando ? (
-            <ActivityIndicator color={colors.surface} />
-          ) : (
-            <Text style={styles.textoBoton}>Guardar tarea</Text>
-          )}
-        </Pressable>
+          <Pressable
+            style={({ pressed }) => [
+              styles.boton,
+              pressed && styles.botonPresionado,
+              guardando && styles.botonInactivo,
+            ]}
+            onPress={enviar}
+            disabled={guardando}
+          >
+            {guardando ? (
+              <ActivityIndicator color={colors.surface} />
+            ) : (
+              <Text style={styles.textoBoton}>Guardar tarea</Text>
+            )}
+          </Pressable>
 
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -169,17 +171,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
   },
+  seguro: {
+    flex: 1,
+  },
   scroll: {
     padding: 24,
     paddingTop: 24,
-  },
-  volver: {
-    marginBottom: 12,
-  },
-  textoVolver: {
-    fontSize: 16,
-    color: colors.primary,
-    fontWeight: '600',
   },
   titulo: {
     fontSize: 24,
@@ -237,11 +234,5 @@ const styles = StyleSheet.create({
     color: colors.surface,
     fontSize: 16,
     fontWeight: '600',
-  },
-  confirmacion: {
-    marginTop: 16,
-    fontSize: 14,
-    color: colors.primary,
-    textAlign: 'center',
   },
 });

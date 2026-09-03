@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  View,
   Text,
   TextInput,
   Pressable,
@@ -10,6 +9,7 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors } from '../constants/colors';
 
 const CONTRASENA_MINIMA = 6;
@@ -77,61 +77,63 @@ export default function AuthForm({
   const errorContrasena = tocados.contrasena ? errores.contrasena : undefined;
 
   return (
-    <KeyboardAvoidingView
-      style={styles.contenedor}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-        <Text style={styles.marca}>TaskFlow</Text>
-        <Text style={styles.titulo}>{titulo}</Text>
-        <Text style={styles.subtitulo}>{subtitulo}</Text>
+    <SafeAreaView style={styles.contenedor} edges={['top', 'bottom', 'left', 'right']}>
+      <KeyboardAvoidingView
+        style={styles.seguro}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+          <Text style={styles.marca}>TaskFlow</Text>
+          <Text style={styles.titulo}>{titulo}</Text>
+          <Text style={styles.subtitulo}>{subtitulo}</Text>
 
-        <Text style={styles.etiqueta}>Correo electrónico</Text>
-        <TextInput
-          style={[styles.campo, errorCorreo && styles.campoConError]}
-          value={valores.correo}
-          onChangeText={(texto) => cambiarCampo('correo', texto)}
-          onBlur={() => marcarTocado('correo')}
-          placeholder="vos@ejemplo.com"
-          placeholderTextColor={colors.textMuted}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          autoCorrect={false}
-        />
-        {errorCorreo ? <Text style={styles.error}>{errorCorreo}</Text> : null}
+          <Text style={styles.etiqueta}>Correo electrónico</Text>
+          <TextInput
+            style={[styles.campo, errorCorreo && styles.campoConError]}
+            value={valores.correo}
+            onChangeText={(texto) => cambiarCampo('correo', texto)}
+            onBlur={() => marcarTocado('correo')}
+            placeholder="vos@ejemplo.com"
+            placeholderTextColor={colors.textMuted}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            autoCorrect={false}
+          />
+          {errorCorreo ? <Text style={styles.error}>{errorCorreo}</Text> : null}
 
-        <Text style={styles.etiqueta}>Contraseña</Text>
-        <TextInput
-          style={[styles.campo, errorContrasena && styles.campoConError]}
-          value={valores.contrasena}
-          onChangeText={(texto) => cambiarCampo('contrasena', texto)}
-          onBlur={() => marcarTocado('contrasena')}
-          placeholder="Al menos 6 caracteres"
-          placeholderTextColor={colors.textMuted}
-          secureTextEntry
-          autoCapitalize="none"
-        />
-        {errorContrasena ? <Text style={styles.error}>{errorContrasena}</Text> : null}
+          <Text style={styles.etiqueta}>Contraseña</Text>
+          <TextInput
+            style={[styles.campo, errorContrasena && styles.campoConError]}
+            value={valores.contrasena}
+            onChangeText={(texto) => cambiarCampo('contrasena', texto)}
+            onBlur={() => marcarTocado('contrasena')}
+            placeholder="Al menos 6 caracteres"
+            placeholderTextColor={colors.textMuted}
+            secureTextEntry
+            autoCapitalize="none"
+          />
+          {errorContrasena ? <Text style={styles.error}>{errorContrasena}</Text> : null}
 
-        {errorGeneral ? <Text style={styles.errorGeneral}>{errorGeneral}</Text> : null}
+          {errorGeneral ? <Text style={styles.errorGeneral}>{errorGeneral}</Text> : null}
 
-        <Pressable
-          style={({ pressed }) => [styles.boton, pressed && styles.botonPresionado]}
-          onPress={enviar}
-          disabled={enviando}
-        >
-          {enviando ? (
-            <ActivityIndicator color={colors.surface} />
-          ) : (
-            <Text style={styles.textoBoton}>{textoBoton}</Text>
-          )}
-        </Pressable>
+          <Pressable
+            style={({ pressed }) => [styles.boton, pressed && styles.botonPresionado]}
+            onPress={enviar}
+            disabled={enviando}
+          >
+            {enviando ? (
+              <ActivityIndicator color={colors.surface} />
+            ) : (
+              <Text style={styles.textoBoton}>{textoBoton}</Text>
+            )}
+          </Pressable>
 
-        <Pressable style={styles.enlace} onPress={onIrAlOtroFormulario}>
-          <Text style={styles.textoEnlace}>{textoEnlace}</Text>
-        </Pressable>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          <Pressable style={styles.enlace} onPress={onIrAlOtroFormulario}>
+            <Text style={styles.textoEnlace}>{textoEnlace}</Text>
+          </Pressable>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -139,6 +141,9 @@ const styles = StyleSheet.create({
   contenedor: {
     flex: 1,
     backgroundColor: colors.background,
+  },
+  seguro: {
+    flex: 1,
   },
   scroll: {
     flexGrow: 1,

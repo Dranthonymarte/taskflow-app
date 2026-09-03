@@ -1,4 +1,5 @@
 import { View, Text, Pressable, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import ProfileCard from '../components/ProfileCard';
 import { useAvatarPicker } from '../hooks/useAvatarPicker';
@@ -36,7 +37,7 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={styles.contenedor}>
+    <SafeAreaView style={styles.contenedor} edges={['left', 'right']}>
       <ProfileCard
         name={nombre}
         role={usuario ? usuario.correo : 'Sin sesión'}
@@ -82,7 +83,7 @@ export default function ProfileScreen() {
       >
         <Text style={styles.textoBoton}>Cerrar sesión</Text>
       </Pressable>
-    </View>
+    </SafeAreaView>
   );
 }
 

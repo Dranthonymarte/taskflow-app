@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { View, Text, FlatList, Pressable, ActivityIndicator, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector, useDispatch } from 'react-redux';
 import TaskItem from '../components/TaskItem';
 import TaskFilters from '../components/TaskFilters';
@@ -45,7 +46,7 @@ export default function TaskListScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.contenedor}>
+    <SafeAreaView style={styles.contenedor} edges={['left', 'right']}>
       <View style={styles.encabezado}>
         <Text style={styles.subtitulo}>
           {pendientes === 0
@@ -82,7 +83,7 @@ export default function TaskListScreen({ navigation }) {
           )
         }
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

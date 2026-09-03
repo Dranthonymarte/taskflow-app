@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectTareaPorId, toggleTaskStatus, deleteTask, addTask } from '../store/tasksSlice';
 import { actualizarEstado, borrarTarea } from '../services/tasksService';
@@ -52,9 +53,9 @@ export default function TaskDetailScreen({ route, navigation }) {
 
   if (!tarea) {
     return (
-      <View style={styles.contenedor}>
+      <SafeAreaView style={styles.contenedor} edges={['left', 'right']}>
         <Text style={styles.noEncontrada}>Esta tarea ya no existe.</Text>
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -102,7 +103,7 @@ export default function TaskDetailScreen({ route, navigation }) {
   };
 
   return (
-    <View style={styles.contenedor}>
+    <SafeAreaView style={styles.contenedor} edges={['left', 'right']}>
       <View style={styles.tarjeta}>
         <Text style={[styles.estado, tarea.completada && styles.estadoCompletada]}>
           {tarea.completada ? 'COMPLETADA' : 'PENDIENTE'}
@@ -129,7 +130,7 @@ export default function TaskDetailScreen({ route, navigation }) {
       <Pressable style={styles.botonSecundario} onPress={borrar} disabled={procesando}>
         <Text style={styles.textoBotonSecundario}>Eliminar tarea</Text>
       </Pressable>
-    </View>
+    </SafeAreaView>
   );
 }
 
