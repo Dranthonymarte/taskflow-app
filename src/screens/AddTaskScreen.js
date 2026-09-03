@@ -104,7 +104,11 @@ export default function AddTaskScreen({ navigation }) {
     setGuardando(false);
     setValores(FORMULARIO_VACIO);
     setTocados({});
-    navigation.navigate('TaskList');
+
+    // popTo y no navigate: desde React Navigation 7, navigate() apila una
+    // segunda copia de la lista en vez de volver a la que ya estaba abierta, y
+    // el encabezado quedaba con una flecha de atras que no correspondia.
+    navigation.popTo('TaskList');
   };
 
   const errorTitulo = tocados.titulo ? errores.titulo : undefined;
