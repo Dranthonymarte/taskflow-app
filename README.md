@@ -19,6 +19,11 @@ paso intermedio.
 
 La app también se puede ejecutar en Expo Go siguiendo los pasos de instalación de más abajo.
 
+> **Al instalar en Android:** como el archivo no viene de Google Play, el teléfono muestra un
+> aviso de seguridad sobre orígenes desconocidos y pide permiso para continuar. Es el
+> comportamiento normal de cualquier aplicación de distribución interna; basta con autorizar la
+> instalación desde el navegador o el gestor de archivos.
+
 ![Build publicada en Expo](capturas/12-build-expo.png)
 
 ## Evidencia visual
