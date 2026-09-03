@@ -6,11 +6,18 @@ desde la galería del teléfono.
 
 ## App publicada
 
-**Instalador (build de EAS):**
+**Página de la compilación en EAS**, con su código QR:
 https://expo.dev/accounts/dranthonymarte/projects/taskflow-app/builds/b7de50b5-4264-4a08-a0a2-298cbe102bbc
 
-Desde esa página se puede escanear el código QR o descargar el `.apk` para instalarlo en un
-teléfono Android. También se puede ejecutar en Expo Go siguiendo los pasos de instalación.
+**Descarga directa del instalador** (`.apk`, 64 MB):
+https://expo.dev/artifacts/eas/LS9rymQr5rE_tw8bD1K9b2FQwFxUDqzanBWKrePxHDw.apk
+
+El primer enlace es la página oficial de la compilación. El segundo es el archivo en sí, y es
+el camino más corto para probar la app: al escanear el QR desde un teléfono, Expo puede ofrecer
+instalar su aplicación auxiliar antes de permitir la descarga, y el enlace directo evita ese
+paso intermedio.
+
+La app también se puede ejecutar en Expo Go siguiendo los pasos de instalación de más abajo.
 
 ![Build publicada en Expo](capturas/12-build-expo.png)
 
