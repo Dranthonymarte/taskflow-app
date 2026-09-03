@@ -12,7 +12,14 @@ export function useAuthListener() {
   useEffect(() => {
     const cancelarEscucha = onAuthStateChanged(auth, (usuarioFirebase) => {
       if (usuarioFirebase) {
-        dispatch(setUsuario({ uid: usuarioFirebase.uid, correo: usuarioFirebase.email }));
+        dispatch(
+          setUsuario({
+            uid: usuarioFirebase.uid,
+            correo: usuarioFirebase.email,
+            nombre: usuarioFirebase.displayName ?? null,
+            fotoURL: usuarioFirebase.photoURL ?? null,
+          })
+        );
       } else {
         dispatch(setUsuario(null));
       }
