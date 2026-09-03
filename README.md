@@ -25,7 +25,7 @@ módulos conviven con las de los últimos. Esta tabla dice dónde quedó cada co
 
 | Módulo | Qué se puede ver | Dónde está |
 |---|---|---|
-| 2 | Pantalla de bienvenida, pantalla de inicio y el perfil mostrando la tarjeta `ProfileCard` alimentada por props (`name`, `role`, `image`) | `src/screens/WelcomeScreen.js`, `src/screens/HomeScreen.js`, `src/screens/ProfileScreen.js`, `src/components/ProfileCard.js` |
+| 2 | El perfil mostrando la tarjeta `ProfileCard` alimentada por props (`name`, `role`, `image`). Las pantallas de bienvenida e inicio de ese módulo quedaron en el tag [checkpoint-2](https://github.com/Dranthonymarte/taskflow-app/tree/checkpoint-2) | `src/screens/ProfileScreen.js`, `src/components/ProfileCard.js` |
 | 3 | Formulario de nueva tarea con estado controlado, validación y mensajes de error debajo de cada campo | `src/screens/AddTaskScreen.js` |
 | 4 | Lista con `FlatList`, mensaje de lista vacía, y detalle de la tarea con su fecha y un botón para volver | `src/screens/TaskListScreen.js`, `src/components/EmptyState.js`, `src/screens/TaskDetailScreen.js` |
 | 5 | Pestañas inferiores con un stack anidado dentro de la pestaña de tareas | `src/navigation/` |
@@ -93,9 +93,7 @@ taskflow-app/
 │   │   ├── TaskFilters.js         # Chips de filtrado conectados al store
 │   │   └── EmptyState.js          # Mensaje cuando no hay tareas
 │   ├── screens/
-│   │   ├── WelcomeScreen.js       # Pantalla de bienvenida del Checkpoint 1
-│   │   ├── HomeScreen.js          # Pantalla inicial del Checkpoint 2
-│   │   ├── ProfileScreen.js       # Perfil: renderiza ProfileCard y cierra sesión
+│   │   ├── ProfileScreen.js       # Perfil: avatar, datos y cierre de sesión
 │   │   ├── LoginScreen.js         # Inicio de sesión
 │   │   ├── RegisterScreen.js      # Creación de cuenta
 │   │   ├── TaskListScreen.js      # Lista con FlatList, filtros y estado vacío
@@ -103,8 +101,8 @@ taskflow-app/
 │   │   └── AddTaskScreen.js       # Formulario controlado con validación
 │   ├── constants/
 │   │   └── colors.js              # Paleta de colores de TaskFlow
-│   ├── assets/                    # Imágenes y fuentes locales
-│   └── theme/                     # Reservado para próximos módulos
+│   └── utils/
+│       └── promesas.js            # Límite de tiempo para las escrituras
 └── assets/                        # Assets generados por Expo (ícono, splash)
 ```
 
