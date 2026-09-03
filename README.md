@@ -27,26 +27,26 @@ La app también se puede ejecutar en Expo Go siguiendo los pasos de instalación
 
 | Registro | Inicio de sesión | Credenciales inválidas |
 |---|---|---|
-| ![Registro](capturas/01-registro.png) | ![Login](capturas/02-login.png) | ![Error de credenciales](capturas/03-error-credenciales.png) |
+| ![Registro](capturas/01-registro.jpg) | ![Login](capturas/02-login.jpg) | ![Error de credenciales](capturas/03-error-credenciales.jpg) |
 
 ### Lista de tareas
 
-| Lista con tareas | Formulario con validación | Detalle de la tarea |
-|---|---|---|
-| ![Lista de tareas](capturas/04-lista-tareas.png) | ![Nueva tarea](capturas/05-nueva-tarea.png) | ![Detalle](capturas/06-detalle-tarea.png) |
+| Lista con tareas | Formulario con validación | Confirmación al guardar | Detalle de la tarea |
+|---|---|---|---|
+| ![Lista de tareas](capturas/04-lista-tareas.jpg) | ![Nueva tarea](capturas/05-nueva-tarea.jpg) | ![Tarea guardada](capturas/14-alerta-exito.jpg) | ![Detalle](capturas/06-detalle-tarea.jpg) |
 
 ### Edición del perfil
 
 | Perfil sin foto | Galería abierta | Perfil con la foto elegida | Después de cancelar |
 |---|---|---|---|
-| ![Perfil](capturas/07-perfil.png) | ![Selector de imagen](capturas/08-selector-imagen.png) | ![Perfil con avatar](capturas/09-perfil-con-avatar.png) | ![Cancelación](capturas/10-cancelar-seleccion.png) |
+| ![Perfil](capturas/07-perfil.jpg) | ![Selector de imagen](capturas/08-selector-imagen.jpg) | ![Perfil con avatar](capturas/09-perfil-con-avatar.jpg) | ![Cancelación](capturas/10-cancelar-seleccion.jpg) |
 
 La última captura de esa fila es la más importante: muestra que **cancelar la selección de una
 imagen deja la aplicación intacta**, sin cambios a medias y sin mensajes de error.
 
 ### Sin conexión
 
-![Sin conexión](capturas/13-sin-conexion.png)
+![Sin conexión](capturas/13-sin-conexion.jpg)
 
 Al guardar una tarea en modo avión, la aplicación no miente diciendo "Éxito": avisa que se
 guardó localmente y que se sincronizará sola cuando vuelva internet.
