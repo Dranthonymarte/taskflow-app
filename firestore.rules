@@ -29,6 +29,17 @@ service cloud.firestore {
                     && resource.data.userId == request.auth.uid;
     }
 
+    match /usuarios/{userId} {
+      // Cada persona lee y escribe únicamente su propio perfil.
+      allow read: if request.auth != null
+                  && request.auth.uid == userId;
+
+      // Solo se aceptan los campos del perfil, para que nadie cuele datos extra.
+      allow write: if request.auth != null
+                   && request.auth.uid == userId
+                   && request.resource.data.keys().hasOnly(['nombre', 'fotoURL', 'actualizadoEn']);
+    }
+
     // Todo lo que no esté declarado arriba queda prohibido.
     match /{document=**} {
       allow read, write: if false;
