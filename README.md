@@ -37,12 +37,13 @@ La app también se puede ejecutar en Expo Go siguiendo los pasos de instalación
 
 ### Edición del perfil
 
-| Perfil sin foto | Galería abierta | Perfil con la foto elegida | Después de cancelar |
+| Perfil sin foto | Galería abierta | Se sale sin elegir nada | Perfil con la foto elegida |
 |---|---|---|---|
-| ![Perfil](capturas/07-perfil.jpg) | ![Selector de imagen](capturas/08-selector-imagen.jpg) | ![Perfil con avatar](capturas/09-perfil-con-avatar.jpg) | ![Cancelación](capturas/10-cancelar-seleccion.jpg) |
+| ![Perfil](capturas/07-perfil.jpg) | ![Selector de imagen](capturas/08-selector-imagen.jpg) | ![Cancelación](capturas/10-cancelar-seleccion.jpg) | ![Perfil con avatar](capturas/09-perfil-con-avatar.jpg) |
 
-La última captura de esa fila es la más importante: muestra que **cancelar la selección de una
-imagen deja la aplicación intacta**, sin cambios a medias y sin mensajes de error.
+La tercera captura es la clave: al salir de la galería sin elegir ninguna imagen, la aplicación
+queda **exactamente como estaba**, sin cambios a medias y sin mensajes de error. Recién en la
+cuarta, al elegir una foto, el avatar se actualiza.
 
 ### Sin conexión
 
