@@ -7,10 +7,10 @@ desde la galería del teléfono.
 ## App publicada
 
 **Página de la compilación en EAS**, con su código QR:
-https://expo.dev/accounts/dranthonymarte/projects/taskflow-app/builds/b7de50b5-4264-4a08-a0a2-298cbe102bbc
+https://expo.dev/accounts/dranthonymarte/projects/taskflow-app/builds/6335f36c-8e32-4c39-a163-f29bac8172a0
 
 **Descarga directa del instalador** (`.apk`, 64 MB):
-https://expo.dev/artifacts/eas/LS9rymQr5rE_tw8bD1K9b2FQwFxUDqzanBWKrePxHDw.apk
+https://expo.dev/artifacts/eas/luBJeWVrYtpoxnGgPF9mN2SwZw3eRZ4_WVDN7YP3Nz4.apk
 
 El primer enlace es la página oficial de la compilación. El segundo es el archivo en sí, y es
 el camino más corto para probar la app: al escanear el QR desde un teléfono, Expo puede ofrecer
