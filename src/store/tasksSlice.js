@@ -4,6 +4,7 @@ const estadoInicial = {
   lista: [],
   filtro: 'todas',
   cargando: true,
+  error: null,
 };
 
 const tasksSlice = createSlice({
@@ -14,7 +15,16 @@ const tasksSlice = createSlice({
     setTasks: (state, action) => {
       state.lista = action.payload;
       state.cargando = false;
+      state.error = null;
     },
+
+    // Sin el cargando en false, un fallo de lectura dejaba la lista girando
+    // para siempre porque nadie más volvía a tocar esa bandera.
+    setTasksError: (state, action) => {
+      state.error = action.payload;
+      state.cargando = false;
+    },
+
     // Las tres acciones siguientes actualizan la pantalla al instante, sin
     // esperar la respuesta de la nube. Firestore confirma después con setTasks.
     addTask: (state, action) => {
@@ -36,12 +46,14 @@ const tasksSlice = createSlice({
     limpiarTareas: (state) => {
       state.lista = [];
       state.cargando = true;
+      state.error = null;
     },
   },
 });
 
 export const {
   setTasks,
+  setTasksError,
   addTask,
   toggleTaskStatus,
   deleteTask,
@@ -54,6 +66,8 @@ export const selectLista = (state) => state.tasks.lista;
 export const selectFiltro = (state) => state.tasks.filtro;
 
 export const selectCargando = (state) => state.tasks.cargando;
+
+export const selectErrorTareas = (state) => state.tasks.error;
 
 export const selectPendientes = (state) =>
   state.tasks.lista.filter((tarea) => !tarea.completada).length;

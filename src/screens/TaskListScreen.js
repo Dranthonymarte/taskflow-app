@@ -9,6 +9,7 @@ import {
   selectFiltro,
   selectPendientes,
   selectCargando,
+  selectErrorTareas,
   setFilter,
 } from '../store/tasksSlice';
 import { colors } from '../constants/colors';
@@ -24,6 +25,7 @@ export default function TaskListScreen({ navigation }) {
   const filtro = useSelector(selectFiltro);
   const pendientes = useSelector(selectPendientes);
   const cargando = useSelector(selectCargando);
+  const error = useSelector(selectErrorTareas);
   const dispatch = useDispatch();
 
   const visibles = useMemo(() => {
@@ -58,6 +60,8 @@ export default function TaskListScreen({ navigation }) {
         </Pressable>
       </View>
 
+      {error ? <Text style={styles.banner}>{error}</Text> : null}
+
       <TaskFilters
         filtroActivo={filtro}
         onCambiarFiltro={(valor) => dispatch(setFilter(valor))}
@@ -69,7 +73,9 @@ export default function TaskListScreen({ navigation }) {
         renderItem={({ item }) => <TaskItem tarea={item} onPress={abrirDetalle} />}
         contentContainerStyle={styles.lista}
         ListEmptyComponent={
-          cargando ? (
+          error ? (
+            <EmptyState titulo="No pudimos cargar tus tareas" mensaje={error} />
+          ) : cargando ? (
             <ActivityIndicator style={styles.cargando} size="large" color={colors.primary} />
           ) : (
             <EmptyState titulo="Nada por acá" mensaje={MENSAJES_VACIO[filtro]} />
@@ -113,6 +119,17 @@ const styles = StyleSheet.create({
     fontSize: 26,
     lineHeight: 30,
     fontWeight: '600',
+  },
+  banner: {
+    marginHorizontal: 20,
+    marginBottom: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: colors.danger,
+    color: colors.danger,
+    fontSize: 13,
   },
   cargando: {
     marginTop: 60,
