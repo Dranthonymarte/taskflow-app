@@ -1,6 +1,7 @@
+import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeApp } from 'firebase/app';
-import { initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import { initializeAuth, getAuth, getReactNativePersistence } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 // Configuración pública del proyecto de Firebase. Estas claves identifican al
@@ -19,8 +20,13 @@ const app = initializeApp(firebaseConfig);
 
 // initializeAuth con AsyncStorage es lo que hace que la sesión sobreviva al
 // cerrar la app. Con getAuth() a secas la sesión se perdería en cada arranque.
-export const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(AsyncStorage),
-});
+//
+// En la versión web ese camino no existe: getReactNativePersistence no viene en
+// el paquete de navegador de firebase/auth. Allá se usa getAuth, que ya guarda
+// la sesión en el almacenamiento del propio navegador.
+export const auth =
+  Platform.OS === 'web'
+    ? getAuth(app)
+    : initializeAuth(app, { persistence: getReactNativePersistence(AsyncStorage) });
 
 export const db = getFirestore(app);
